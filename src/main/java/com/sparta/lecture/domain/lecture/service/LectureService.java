@@ -7,6 +7,7 @@ import com.sparta.lecture.domain.lecture.entity.Lecture;
 import com.sparta.lecture.domain.lecture.repository.LectureRepository;
 import com.sparta.lecture.global.handler.exception.CustomApiException;
 import com.sparta.lecture.global.jwt.JwtUtil;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,11 +49,18 @@ public class LectureService {
     }
 
     @Transactional(readOnly = true)
-    public List<LectureResponseDto.GetLectureResponseDto> getLectureCategory(Category category, String tokenValue) {
+    public List<LectureResponseDto.GetLectureResponseDto> getLectureCategory(
+            Category category, String sort, String direction, String tokenValue) {
+
         isExpiredToken(jwtUtil.substringToken(tokenValue));
 
-        List<Lecture> lectures = lectureRepository.findByCategory(category);
-        return lectures.stream().map(LectureResponseDto.GetLectureResponseDto::new).collect(Collectors.toList());
+        // 정렬 기준 정의
+        Sort sortDirection = "asc".equalsIgnoreCase(direction)
+                ? Sort.by(sort).ascending() : Sort.by(sort).descending();
+
+        List<Lecture> lectures = lectureRepository.findByCategory(category, sortDirection);
+        return lectures.stream().map(LectureResponseDto.GetLectureResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     // 토큰 검증

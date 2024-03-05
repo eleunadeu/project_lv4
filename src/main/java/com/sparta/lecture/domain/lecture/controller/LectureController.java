@@ -45,10 +45,12 @@ public class LectureController {
     @GetMapping("/{category}")
     public ResponseEntity<List<LectureResponseDto.GetLectureResponseDto>> getLectureCategory(
             @PathVariable Category category,
+            @RequestParam(defaultValue = "createdAt") String sort,
+            @RequestParam(defaultValue = "desc") String direction,
             @CookieValue(JwtUtil.AUTHORIZATION_HEADER) String tokenValue) {
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(lectureService.getLectureCategory(category, tokenValue));
+                .body(lectureService.getLectureCategory(category, sort, direction, tokenValue));
     }
 
 }
