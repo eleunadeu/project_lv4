@@ -1,5 +1,6 @@
 package com.sparta.lecture.domain.lecture.entity;
 
+import com.sparta.lecture.domain.tutor.entity.Tutor;
 import com.sparta.lecture.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -33,12 +34,13 @@ public class Lecture extends Timestamped {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @Column(nullable = false)
-    private Long tutor;
-
     @CreatedDate
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "tutor_id")
+    private Tutor tutor;
 
     @OneToMany(mappedBy = "lecutre")
     private List<Comment> comments = new ArrayList<>();
@@ -46,7 +48,7 @@ public class Lecture extends Timestamped {
     @Builder
     public Lecture(String lectureName, Integer price,
                    String lectureIntro, Category category,
-                   Long tutor) {
+                   Tutor tutor) {
 
         this.lectureName = lectureName;
         this.price = price;
