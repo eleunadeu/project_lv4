@@ -1,36 +1,32 @@
 package com.sparta.lecture.global.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
-@Table(name = "User")
+@Setter
+@NoArgsConstructor
+@Table(name = "user")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
-    @Email
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String password;
-
-    @Column
     private String gender;
-
-    @Column
     private String phoneNumber;
-
-    @Column
     private String address;
 
-    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
     private AuthEnum authority;
 
 }
