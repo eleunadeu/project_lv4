@@ -4,8 +4,6 @@ import com.sparta.lecture.domain.lecture.dto.LectureRequestDto;
 import com.sparta.lecture.domain.lecture.dto.LectureResponseDto;
 import com.sparta.lecture.domain.lecture.entity.Category;
 import com.sparta.lecture.domain.lecture.service.LectureService;
-import com.sparta.lecture.domain.tutor.dto.TutorRequestDto;
-import com.sparta.lecture.domain.tutor.dto.TutorResponseDto;
 import com.sparta.lecture.global.jwt.JwtUtil;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

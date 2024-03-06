@@ -40,10 +40,11 @@ public class LectureResponseDto {
         private String lectureIntro;
         private Category category;
         private Long tutor;
+        private boolean liked;
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime createdAt;
 
-        public GetLectureResponseDto(Lecture lecture) {
+        public GetLectureResponseDto(Lecture lecture, boolean liked) {
             this.id = lecture.getId();
             this.lectureName = lecture.getLectureName();
             this.price = lecture.getPrice();
@@ -51,6 +52,7 @@ public class LectureResponseDto {
             this.category = lecture.getCategory();
             this.tutor = lecture.getTutor();
             this.createdAt = lecture.getCreatedAt();
+            this.liked = liked;
         }
     }
 }
