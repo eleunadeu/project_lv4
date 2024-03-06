@@ -6,6 +6,8 @@ import com.sparta.lecture.domain.lecture.entity.Category;
 import com.sparta.lecture.domain.lecture.entity.Lecture;
 import com.sparta.lecture.domain.lecture.repository.LectureRepository;
 import com.sparta.lecture.domain.lecture.repository.LikeRepository;
+import com.sparta.lecture.domain.tutor.entity.Tutor;
+import com.sparta.lecture.domain.tutor.repository.TutorRepository;
 import com.sparta.lecture.global.entity.User;
 import com.sparta.lecture.global.handler.exception.CustomApiException;
 import com.sparta.lecture.global.jwt.JwtUtil;
@@ -26,12 +28,14 @@ public class LectureService {
     private final LectureRepository lectureRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+    private final TutorRepository tutorRepository;
     private final JwtUtil jwtUtil;
     public LectureService(LectureRepository lectureRepository, UserRepository userRepository,
-                          LikeRepository likeRepository, JwtUtil jwtUtil) {
+                          LikeRepository likeRepository, TutorRepository tutorRepository, JwtUtil jwtUtil) {
         this.lectureRepository = lectureRepository;
         this.userRepository = userRepository;
         this.likeRepository = likeRepository;
+        this.tutorRepository = tutorRepository;
         this.jwtUtil = jwtUtil;
     }
 
@@ -41,7 +45,12 @@ public class LectureService {
 
         validateAndAuthenticateToken(tokenValue);
 
-        Lecture lecture = lectureRepository.save(requestDto.toEntity());
+        // Tutor 엔티티 조회
+        Tutor tutor = tutorRepository.findById(requestDto.getTutorId())
+                .orElseThrow(() -> new CustomApiException("Tutor not found"));
+
+        // toEntity 메서드를 수정하여 Tutor 엔티티를 전달
+        Lecture lecture = lectureRepository.save(requestDto.toEntity(tutor));
 
         return new LectureResponseDto.CreateLectureResponseDto(lecture);
     }
@@ -70,9 +79,10 @@ public class LectureService {
 
         User user = authenticateUser(tokenValue);
 
-        // 정렬 기준 정의
-        Sort sortDirection = "asc".equalsIgnoreCase(direction)
-                ? Sort.by(sort).ascending() : Sort.by(sort).descending();
+        // 정렬 방향 유효성 검사 및 기본값 설정
+        // 'asc' 및 유효하지 않은 값에 대해 기본적으로 오름차순 정렬을 적용
+        Sort sortDirection = ("desc".equalsIgnoreCase(direction))
+                ? Sort.by(sort).descending() : Sort.by(sort).ascending();
 
         List<Lecture> lectures = lectureRepository.findByCategory(category, sortDirection);
 
