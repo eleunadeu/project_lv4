@@ -30,31 +30,27 @@ public class LikeService {
 
     @Transactional
     public void toggleLike(Long id, String tokenValue) {
-        // 토큰 검증
-        isExpiredToken(jwtUtil.substringToken(tokenValue));
-
-        // 사용자 검증
-        Claims claims = jwtUtil.getUserInfoFromToken(jwtUtil.substringToken(tokenValue));
-        String username = claims.getSubject(); // 또는 getId() 대신 getSubject()를 사용, 상황에 따라 다름
-
-        User user = (User) userRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomApiException("사용자가 존재하지 않습니다."));
+        User user = authenticateUser(tokenValue);
 
         // 강의 검증
         Lecture lecture = lectureRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("강의가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomApiException("강의가 존재하지 않습니다."));
 
         // 좋아요
         likeRepository.findByLectureAndUser(lecture, user).ifPresentOrElse(
-                like -> likeRepository.delete((Like) like), // 이미 좋아요가 있다면 삭제
+                likeRepository::delete, // 이미 좋아요가 있다면 삭제
                 () -> likeRepository.save(new Like(lecture, user)) // 없다면 추가
         );
     }
 
-    // 토큰 검증
-    private void isExpiredToken(String token) {
-        if (!jwtUtil.validateToken(token)) {
-            throw new IllegalArgumentException("Token Error");
-        }
+    // 사용자 인증 로직의 중복을 제거하기 위한 메서드
+    public User authenticateUser(String tokenValue) {
+        // 토큰에서 사용자 정보 추출
+        Claims claims = jwtUtil.getUserInfoFromToken(jwtUtil.substringToken(tokenValue));
+        String username = claims.getSubject(); // "getSubject()"는 사용자 이름 또는 고유 식별자를 의미
+
+        // 사용자 검증 및 반환
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomApiException("사용자가 존재하지 않습니다."));
     }
 }

@@ -35,14 +35,7 @@ public class CommentService {
     }
 
     public CommentDto createComment(Long id, String content, String tokenValue) {
-        isExpiredToken(jwtUtil.substringToken(tokenValue));
-
-        // 토큰에서 사용자 정보 추출 및 사용자 엔터티 조회
-        Claims claims = jwtUtil.getUserInfoFromToken(jwtUtil.substringToken(tokenValue));
-        String username = claims.getId();
-
-        User user = (User) userRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomApiException("사용자가 존재하지 않습니다."));
+        User user = authenticateUser(tokenValue);
 
         // 강의 존재 여부 확인
         Lecture lecture = validateLectureExists(id);
@@ -61,8 +54,6 @@ public class CommentService {
     }
 
     public List<CommentDto.GetCommentResponseDto> getLectureComments(Long id, String tokenValue) {
-        isExpiredToken(jwtUtil.substringToken(tokenValue));
-
         Lecture lecture = validateLectureExists(id);
 
         List<Comment> comments = commentRepository.findByLecture(lecture);
@@ -74,8 +65,6 @@ public class CommentService {
 
     @Transactional
     public CommentDto updateLectureComment(Long id, Long commentId, String content, String tokenValue) {
-        isExpiredToken(jwtUtil.substringToken(tokenValue));
-
         // 사용자 검증
         Comment comment = validateCommentOwnership(id, commentId, tokenValue);
 
@@ -89,8 +78,6 @@ public class CommentService {
 
     @Transactional
     public void deleteLectureComment(Long id, Long commentId, String tokenValue) {
-        isExpiredToken(jwtUtil.substringToken(tokenValue));
-
         // 사용자 검증
         Comment comment = validateCommentOwnership(id, commentId, tokenValue);
 
@@ -98,36 +85,35 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
-    // 토큰 검증
-    private void isExpiredToken(String token) {
+    // 토큰 유효성 검사 및 사용자 인증을 수행하는 메서드
+    private User authenticateUser(String tokenValue) {
+        String token = jwtUtil.substringToken(tokenValue);
         if (!jwtUtil.validateToken(token)) {
-            throw new IllegalArgumentException("Token Error");
+            throw new CustomApiException("토큰이 유효하지 않습니다.");
         }
+        Claims claims = jwtUtil.getUserInfoFromToken(token);
+        String username = claims.getSubject();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new CustomApiException("사용자가 존재하지 않습니다."));
     }
 
     // 강의 검증
-    public Lecture validateLectureExists(Long id) {
+    private Lecture validateLectureExists(Long id) {
         return lectureRepository.findById(id)
                 .orElseThrow(() -> new CustomApiException("해당 강의가 존재하지 않습니다."));
     }
 
     // 댓글 사용자 검증
-    @Transactional
-    public Comment validateCommentOwnership(Long lectureId, Long commentId, String tokenValue) {
-        Claims claims = jwtUtil.getUserInfoFromToken(jwtUtil.substringToken(tokenValue));
-        String username = claims.getSubject(); // 또는 getId() 대신 getSubject()를 사용, 상황에 따라 다름
+    private Comment validateCommentOwnership(Long lectureId, Long commentId, String tokenValue) {
+        User user = authenticateUser(tokenValue);
 
-        User user = (User) userRepository.findByUsername(username)
-                .orElseThrow(() -> new CustomApiException("사용자가 존재하지 않습니다."));
-
-        lectureRepository.findById(lectureId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 강의가 존재하지 않습니다."));
+        validateLectureExists(lectureId);
 
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomApiException("해당 댓글이 존재하지 않습니다."));
 
         if (!comment.getUser().equals(user)) {
-            throw new IllegalArgumentException("댓글에 대한 권한이 없습니다.");
+            throw new CustomApiException("댓글에 대한 권한이 없습니다.");
         }
 
         return comment;

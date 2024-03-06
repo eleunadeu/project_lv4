@@ -35,12 +35,11 @@ public class LectureService {
         this.jwtUtil = jwtUtil;
     }
 
-
+    @Transactional
     public LectureResponseDto.CreateLectureResponseDto createLecture(
             LectureRequestDto.CreateLectureRequestDto requestDto, String tokenValue) {
 
-        String token = jwtUtil.substringToken(tokenValue);
-        isExpiredToken(token);
+        validateAndAuthenticateToken(tokenValue);
 
         Lecture lecture = lectureRepository.save(requestDto.toEntity());
 
@@ -49,7 +48,7 @@ public class LectureService {
 
     @Transactional(readOnly = true)
     public LectureResponseDto.GetLectureResponseDto getLecture(Long id, String tokenValue) {
-        isExpiredToken(jwtUtil.substringToken(tokenValue));
+        validateAndAuthenticateToken(tokenValue);
 
         // 강의 검증
         Lecture lecture = lectureRepository.findById(id).orElseThrow(
@@ -67,7 +66,7 @@ public class LectureService {
     public List<LectureResponseDto.GetLectureResponseDto> getLectureCategory(
             Category category, String sort, String direction, String tokenValue) {
 
-        isExpiredToken(jwtUtil.substringToken(tokenValue));
+        validateAndAuthenticateToken(tokenValue);
 
         User user = authenticateUser(tokenValue);
 
@@ -84,9 +83,10 @@ public class LectureService {
     }
 
     // 토큰 검증
-    private void isExpiredToken(String token) {
+    private void validateAndAuthenticateToken(String tokenValue) {
+        String token = jwtUtil.substringToken(tokenValue);
         if (!jwtUtil.validateToken(token)) {
-            throw new IllegalArgumentException("Token Error");
+            throw new CustomApiException("Token validation failed");
         }
     }
 
@@ -105,7 +105,7 @@ public class LectureService {
         String username = claims.getSubject(); // "getSubject()"는 사용자 이름 또는 고유 식별자를 의미
 
         // 사용자 검증 및 반환
-        return (User) userRepository.findByUsername(username)
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomApiException("사용자가 존재하지 않습니다."));
     }
 }

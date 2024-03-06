@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface LikeRepository extends JpaRepository<Like, Long> {
-    Optional<Object> findByLectureAndUser(Lecture lecture, User user);
+    Optional<Like> findByLectureAndUser(Lecture lecture, User user);
 
     boolean existsByLectureAndUser(Lecture lecture, User user);
 }
