@@ -11,7 +11,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
+    private Long id;
 
     @Email
     @Column(nullable = false, unique = true)
@@ -33,4 +33,7 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private AuthEnum authority;
 
+//    public User(Long userId) {
+//        this.id = userId;
+//    }
 }

@@ -47,6 +47,12 @@ public class LikeService {
     public User authenticateUser(String tokenValue) {
         // 토큰에서 사용자 정보 추출
         Claims claims = jwtUtil.getUserInfoFromToken(jwtUtil.substringToken(tokenValue));
+
+        // 사용자 정보가 null인 경우 예외 처리
+        if (claims == null || claims.getSubject() == null) {
+            throw new CustomApiException("토큰에서 사용자 정보를 추출할 수 없습니다.");
+        }
+
         String username = claims.getSubject(); // "getSubject()"는 사용자 이름 또는 고유 식별자를 의미
 
         // 사용자 검증 및 반환

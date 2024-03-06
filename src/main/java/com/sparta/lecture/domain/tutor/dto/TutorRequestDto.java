@@ -2,6 +2,7 @@ package com.sparta.lecture.domain.tutor.dto;
 
 import com.sparta.lecture.domain.tutor.entity.Tutor;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Getter;
 
 public class TutorRequestDto {
@@ -15,6 +16,15 @@ public class TutorRequestDto {
         private String corp;
         private String phoneNumber;
         private String intro;
+
+        @Builder
+        public CreateTutorRequestDto(String name, Integer career, String corp, String phoneNumber, String intro) {
+            this.name = name;
+            this.career = career;
+            this.corp = corp;
+            this.phoneNumber = phoneNumber;
+            this.intro = intro;
+        }
 
         public Tutor toEntity() {
             return Tutor.builder()

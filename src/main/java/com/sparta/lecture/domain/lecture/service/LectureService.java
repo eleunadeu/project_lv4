@@ -57,7 +57,7 @@ public class LectureService {
         User user = authenticateUser(tokenValue);
 
         // 강의에 대한 좋아요 상태 확인
-        boolean liked = isLiked(id, user.getId());
+        boolean liked = isLiked(lecture, user.getId());
 
         return new LectureResponseDto.GetLectureResponseDto(lecture, liked);
     }
@@ -90,12 +90,9 @@ public class LectureService {
         }
     }
 
-    public boolean isLiked(Long lectureId, Long userId) {
-        Lecture lecture = lectureRepository.findById(lectureId)
-                .orElseThrow(() -> new IllegalArgumentException("강의가 존재하지 않습니다."));
+    public boolean isLiked(Lecture lecture, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
-
         return likeRepository.existsByLectureAndUser(lecture, user);
     }
 
