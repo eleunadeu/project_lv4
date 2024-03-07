@@ -1,5 +1,6 @@
 package com.sparta.lecture.domain.lecture.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sparta.lecture.global.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -22,7 +23,9 @@ public class Comment {
     @Column(nullable = false)
     private String content;
 
+    @JsonBackReference
     @ManyToOne
+    @JoinColumn(name = "lecture_id")
     private Lecture lecture;
 
     @ManyToOne

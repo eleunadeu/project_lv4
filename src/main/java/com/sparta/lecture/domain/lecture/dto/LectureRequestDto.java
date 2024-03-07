@@ -24,7 +24,6 @@ public class LectureRequestDto {
                     .lectureIntro(this.lectureIntro)
                     .category(this.category)
                     .tutor(tutor)
-                    .category(this.category)
                     .build();
         }
     }

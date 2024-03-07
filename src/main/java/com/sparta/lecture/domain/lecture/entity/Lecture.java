@@ -1,5 +1,6 @@
 package com.sparta.lecture.domain.lecture.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sparta.lecture.domain.tutor.entity.Tutor;
 import com.sparta.lecture.global.entity.Timestamped;
 import jakarta.persistence.*;
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Table(name = "lecture")
-public class Lecture extends Timestamped{
+public class Lecture extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +39,7 @@ public class Lecture extends Timestamped{
     private Tutor tutor;
 
     // lazy 로딩 적용
+    @JsonManagedReference
     @OneToMany(mappedBy = "lecture")
     private List<Comment> comments = new ArrayList<>();
 
