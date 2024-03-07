@@ -55,10 +55,10 @@ public class LikesService {
             throw new CustomApiException(NOT_FOUND_USER_INFO.getMessage());
         }
 
-        String username = claims.getSubject(); // "getSubject()"는 사용자 이름 또는 고유 식별자를 의미
+        String email = claims.getSubject(); // "getSubject()"는 사용자 이름 또는 고유 식별자를 의미
 
         // 사용자 검증 및 반환
-        return userRepository.findByUsername(username)
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomApiException(NOT_FOUND_USER_ID.getMessage()));
     }
 }

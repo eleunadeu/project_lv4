@@ -100,8 +100,8 @@ public class CommentService {
             throw new CustomApiException(TOKEN_NOT_VALID.getMessage());
         }
         Claims claims = jwtUtil.getUserInfoFromToken(token);
-        String username = claims.getSubject();
-        return userRepository.findByUsername(username)
+        String email = claims.getSubject();
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomApiException(NOT_FOUND_USER_ID.getMessage()));
     }
 

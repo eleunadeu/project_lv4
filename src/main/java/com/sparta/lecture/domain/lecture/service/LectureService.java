@@ -110,10 +110,10 @@ public class LectureService {
     public User authenticateUser(String tokenValue) {
         // 토큰에서 사용자 정보 추출
         Claims claims = jwtUtil.getUserInfoFromToken(jwtUtil.substringToken(tokenValue));
-        String username = claims.getSubject(); // "getSubject()"는 사용자 이름 또는 고유 식별자를 의미
+        String email = claims.getSubject(); // "getSubject()"는 사용자 이름 또는 고유 식별자를 의미
 
         // 사용자 검증 및 반환
-        return userRepository.findByUsername(username)
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomApiException(BAD_REQUEST_USER_AUTHENTICATION.getMessage()));
 
     }
