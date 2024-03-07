@@ -1,15 +1,10 @@
 package com.sparta.lecture;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
-
 import com.sparta.lecture.domain.lecture.entity.Lecture;
-import com.sparta.lecture.domain.lecture.entity.Like;
+import com.sparta.lecture.domain.lecture.entity.Likes;
 import com.sparta.lecture.domain.lecture.repository.LectureRepository;
-import com.sparta.lecture.domain.lecture.repository.LikeRepository;
-import com.sparta.lecture.domain.lecture.service.LikeService;
+import com.sparta.lecture.domain.lecture.repository.LikesRepository;
+import com.sparta.lecture.domain.lecture.service.LikesService;
 import com.sparta.lecture.global.entity.User;
 import com.sparta.lecture.global.handler.exception.CustomApiException;
 import com.sparta.lecture.global.jwt.JwtUtil;
@@ -25,11 +20,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 public class LikeServiceTest {
 
     @Mock
-    private LikeRepository likeRepository;
+    private LikesRepository likesRepository;
 
     @Mock
     private LectureRepository lectureRepository;
@@ -41,11 +40,11 @@ public class LikeServiceTest {
     private JwtUtil jwtUtil;
 
     @InjectMocks
-    private LikeService likeService;
+    private LikesService likesService;
 
     private User user;
     private Lecture lecture;
-    private Like like;
+    private Likes like;
     private String token;
     private Claims claims;
 
@@ -53,7 +52,7 @@ public class LikeServiceTest {
     void setUp() {
         user = new User(); // 필요한 속성 설정
         lecture = new Lecture(); // 필요한 속성 설정
-        like = new Like(lecture, user);
+        like = new Likes(lecture, user);
         token = "Bearer token";
         claims = mock(Claims.class);
         when(claims.getSubject()).thenReturn("username");
@@ -66,11 +65,11 @@ public class LikeServiceTest {
         when(jwtUtil.getUserInfoFromToken("token")).thenReturn(claims);
         when(userRepository.findByUsername("username")).thenReturn(Optional.of(user));
         when(lectureRepository.findById(anyLong())).thenReturn(Optional.of(lecture));
-        when(likeRepository.findByLectureAndUser(lecture, user)).thenReturn(Optional.of(like));
+        when(likesRepository.findByLectureAndUser(lecture, user)).thenReturn(Optional.of(like));
 
-        likeService.toggleLike(1L, token);
+        likesService.toggleLike(1L, token);
 
-        verify(likeRepository).delete(like);
+        verify(likesRepository).delete(like);
     }
 
     @Test
@@ -80,11 +79,11 @@ public class LikeServiceTest {
         when(jwtUtil.getUserInfoFromToken("token")).thenReturn(claims);
         when(userRepository.findByUsername("username")).thenReturn(Optional.of(user));
         when(lectureRepository.findById(anyLong())).thenReturn(Optional.of(lecture));
-        when(likeRepository.findByLectureAndUser(lecture, user)).thenReturn(Optional.empty());
+        when(likesRepository.findByLectureAndUser(lecture, user)).thenReturn(Optional.empty());
 
-        likeService.toggleLike(1L, token);
+        likesService.toggleLike(1L, token);
 
-        verify(likeRepository).save(any(Like.class));
+        verify(likesRepository).save(any(Likes.class));
     }
 
     @Test
@@ -93,6 +92,6 @@ public class LikeServiceTest {
         when(jwtUtil.substringToken(token)).thenReturn("token");
         when(jwtUtil.getUserInfoFromToken("token")).thenReturn(null);
 
-        assertThrows(CustomApiException.class, () -> likeService.authenticateUser(token));
+        assertThrows(CustomApiException.class, () -> likesService.authenticateUser(token));
     }
 }

@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "like")
-public class Like {
+@Table(name = "likes")
+public class Likes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class Like {
     private User user;
 
     @Builder
-    public Like(Lecture lecture, User user) {
+    public Likes(Lecture lecture, User user) {
         this.lecture = lecture;
         this.user = user;
     }

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "tutor")
 public class Tutor {
-
+    // 데이터 유효성 검사 강화
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

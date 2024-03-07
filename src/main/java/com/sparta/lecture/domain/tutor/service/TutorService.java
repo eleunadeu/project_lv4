@@ -11,7 +11,7 @@ import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.sparta.lecture.global.handler.exception.ErrorCode.NOT_FOUND_TUTOR_ID;
+import static com.sparta.lecture.global.handler.exception.ErrorCode.*;
 
 @Service
 public class TutorService {
@@ -22,6 +22,7 @@ public class TutorService {
         this.jwtUtil = jwtUtil;
     }
 
+    // 예외 처리 세분화
     @Transactional
     public TutorResponseDto.CreateTutorResponseDto createTutor(TutorRequestDto.CreateTutorRequestDto requestDto, String tokenValue) {
         checkAuthority(tokenValue);
@@ -39,15 +40,17 @@ public class TutorService {
         return new TutorResponseDto.ReadTutorResponseDto(tutor.getName(), tutor.getCareer(), tutor.getCorp(), tutor.getIntro());
     }
 
+    // 검증 메서드 중앙 관리화
+    // 예외 처리 메시지 상수화
     public void checkAuthority(String tokenValue) {
         String token = jwtUtil.substringToken(tokenValue);
         if (!jwtUtil.validateToken(token)) {
-            throw new CustomApiException("Token validation failed");
+            throw new CustomApiException(TOKEN_NOT_VALID.getMessage());
         }
         Claims info = jwtUtil.getUserInfoFromToken(token);
         String authority = (String) info.get(JwtUtil.AUTHORIZATION_KEY);
         if (!AuthEnum.valueOf(authority).equals(AuthEnum.ADMIN)) {
-            throw new CustomApiException("Unauthorized Access");
+            throw new CustomApiException(BAD_REQUEST_USER_AUTHENTICATION.getMessage());
         }
     }
 }

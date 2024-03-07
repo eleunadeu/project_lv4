@@ -1,12 +1,13 @@
 package com.sparta.lecture.domain.lecture.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sparta.lecture.domain.tutor.entity.Tutor;
 import com.sparta.lecture.global.entity.Timestamped;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,20 +34,19 @@ public class Lecture extends Timestamped {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @Column(nullable = false)
-    private Long tutor;
+    @ManyToOne
+    @JoinColumn(name = "tutor_id")
+    private Tutor tutor;
 
-    @CreatedDate
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
+    // lazy 로딩 적용
+    @JsonManagedReference
     @OneToMany(mappedBy = "lecture")
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
     public Lecture(String lectureName, Integer price,
                    String lectureIntro, Category category,
-                   Long tutor) {
+                   Tutor tutor) {
 
         this.lectureName = lectureName;
         this.price = price;

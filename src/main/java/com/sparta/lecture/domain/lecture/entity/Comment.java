@@ -1,5 +1,6 @@
 package com.sparta.lecture.domain.lecture.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sparta.lecture.global.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -13,6 +14,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "comment")
 public class Comment {
 
+    // 유효성 검사(size, notnull)
+    // 댓글 생성 및 수정 시간 추가 고려
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
@@ -20,7 +23,9 @@ public class Comment {
     @Column(nullable = false)
     private String content;
 
+    @JsonBackReference
     @ManyToOne
+    @JoinColumn(name = "lecture_id")
     private Lecture lecture;
 
     @ManyToOne

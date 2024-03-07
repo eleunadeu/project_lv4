@@ -10,12 +10,16 @@ import com.sparta.lecture.global.handler.exception.CustomApiException;
 import com.sparta.lecture.global.jwt.JwtUtil;
 import com.sparta.lecture.global.repository.UserRepository;
 import io.jsonwebtoken.Claims;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.sparta.lecture.global.handler.exception.ErrorCode.*;
+
+@Slf4j(topic = "comment")
 @Service
 public class CommentService {
 
@@ -34,6 +38,7 @@ public class CommentService {
         this.jwtUtil = jwtUtil;
     }
 
+    @Transactional
     public CommentDto createComment(Long id, String content, String tokenValue) {
         User user = authenticateUser(tokenValue);
 
@@ -53,6 +58,7 @@ public class CommentService {
                 comment.getLecture(), comment.getUser());
     }
 
+    @Transactional(readOnly = true)
     public List<CommentDto.GetCommentResponseDto> getLectureComments(Long id, String tokenValue) {
         Lecture lecture = validateLectureExists(id);
 
@@ -85,22 +91,24 @@ public class CommentService {
         commentRepository.delete(comment);
     }
 
+    // 검증 메서드 보안 강화 및, 유틸리티 클래스화 고려
+    // 예외 처리 세분화
     // 토큰 유효성 검사 및 사용자 인증을 수행하는 메서드
     private User authenticateUser(String tokenValue) {
         String token = jwtUtil.substringToken(tokenValue);
         if (!jwtUtil.validateToken(token)) {
-            throw new CustomApiException("토큰이 유효하지 않습니다.");
+            throw new CustomApiException(TOKEN_NOT_VALID.getMessage());
         }
         Claims claims = jwtUtil.getUserInfoFromToken(token);
-        String username = claims.getSubject();
-        return userRepository.findByEmail(username)
-                .orElseThrow(() -> new CustomApiException("사용자가 존재하지 않습니다."));
+        String email = claims.getSubject();
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomApiException(NOT_FOUND_USER_ID.getMessage()));
     }
 
     // 강의 검증
     private Lecture validateLectureExists(Long id) {
         return lectureRepository.findById(id)
-                .orElseThrow(() -> new CustomApiException("해당 강의가 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomApiException(NOT_FOUND_LECTURE_INFORMATION.getMessage()));
     }
 
     // 댓글 사용자 검증
@@ -110,10 +118,10 @@ public class CommentService {
         validateLectureExists(lectureId);
 
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CustomApiException("해당 댓글이 존재하지 않습니다."));
+                .orElseThrow(() -> new CustomApiException(NOT_FOUND_COMMENT.getMessage()));
 
         if (!comment.getUser().equals(user)) {
-            throw new CustomApiException("댓글에 대한 권한이 없습니다.");
+            throw new CustomApiException(UNAUTHORIZED_COMMENT.getMessage());
         }
 
         return comment;

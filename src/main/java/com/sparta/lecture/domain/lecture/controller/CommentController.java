@@ -19,13 +19,16 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    // 댓글 내용 유효성 검사 (DTO 타입으로 받기)
+    // 보안 및 권한 권리(컨트롤러 단에서 -> 서비스 단에서 처리하는데 컨트롤러 선에서 해결되도록)
+    // 예외 처리
     @PostMapping("/{id}/comment")
     public ResponseEntity<CommentDto> createComment(
             @PathVariable Long id,
             @RequestBody String content,
             @CookieValue(JwtUtil.AUTHORIZATION_HEADER) String tokenValue) {
 
-        return ResponseEntity.status(HttpStatus.OK)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(commentService.createComment(id, content, tokenValue));
     }
 

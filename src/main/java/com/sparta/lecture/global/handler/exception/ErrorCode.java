@@ -11,6 +11,7 @@ public enum ErrorCode {
     NOT_FOUND_USER_ID("찾을 수 없는 유저입니다."),
     NOT_FOUND_USER_PW("찾을 수 없는 유저 비밀번호 입니다."),
 
+    NOT_FOUND_USER_INFO("유저 정보를 찾을 수 없습니다."),
     //공통
     TOKEN_NOT_VALID("토큰이 일치하지 않습니다."),
     UNAUTHORIZED_ADMIN("관리자 권한이 없습니다."),
@@ -25,6 +26,10 @@ public enum ErrorCode {
     //회원가입
     ALREADY_REGISTERED_PHONE("이미 가입된 휴대폰 번호입니다."),
     ALREADY_REGISTERED_IDENTIFICATION("이미 가입된 주민번호입니다."),
+
+    // 댓글
+    NOT_FOUND_COMMENT("해당 댓글이 존재하지 않습니다."),
+    UNAUTHORIZED_COMMENT("댓글에 대한 권한이 없습니다.")
 
     ;
 

@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LikeDto {
+public class LikesDto {
     private Long likeId;
     private Lecture lecture;
     private User user;
 
     @Builder
-    public LikeDto(Long likeId, Lecture lecture, User user) {
+    public LikesDto(Long likeId, Lecture lecture, User user) {
         this.likeId = likeId;
         this.lecture = lecture;
         this.user = user;

@@ -13,15 +13,15 @@ import lombok.NoArgsConstructor;
 public class CommentDto {
     private Long commentId;
     private String content;
-    private Lecture lecture;
-    private User user;
+    private Long lectureId;
+    private Long userId;
 
     @Builder
     public CommentDto(Long commentId, String content, Lecture lecture, User user) {
         this.commentId = commentId;
         this.content = content;
-        this.lecture = lecture;
-        this.user = user;
+        this.lectureId = lecture.getId();
+        this.userId = user.getId();
     }
 
 
