@@ -2,11 +2,14 @@ package com.sparta.lecture.global.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "User")
+@Table(name = "user")
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -31,6 +34,16 @@ public class User {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private AuthEnum authority;
+    private AuthEnum role;
+
+    @Builder
+    public User(String email, String password, String gender, String phoneNumber, String address, AuthEnum role){
+        this.email=email;
+        this.password = password;
+        this.gender = gender;
+        this.phoneNumber = phoneNumber;
+        this.address = address;
+        this.role = role;
+    }
 
 }
