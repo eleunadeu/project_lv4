@@ -6,8 +6,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +14,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Table(name = "lecture")
-public class Lecture extends Timestamped {
+public class Lecture extends Timestamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,15 +33,12 @@ public class Lecture extends Timestamped {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @CreatedDate
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
     @ManyToOne
     @JoinColumn(name = "tutor_id")
     private Tutor tutor;
 
-    @OneToMany(mappedBy = "lecutre")
+    // lazy 로딩 적용
+    @OneToMany(mappedBy = "lecture")
     private List<Comment> comments = new ArrayList<>();
 
     @Builder

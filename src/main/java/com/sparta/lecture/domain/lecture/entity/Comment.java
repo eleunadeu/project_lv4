@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "comment")
 public class Comment {
 
+    // 유효성 검사(size, notnull)
+    // 댓글 생성 및 수정 시간 추가 고려
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;

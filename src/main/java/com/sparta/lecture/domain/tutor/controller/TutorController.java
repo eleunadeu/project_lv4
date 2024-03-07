@@ -18,7 +18,7 @@ public class TutorController {
         this.tutorService = tutorService;
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<TutorResponseDto.CreateTutorResponseDto> createTutor(
             @RequestBody @Valid TutorRequestDto.CreateTutorRequestDto requestDto,
             @CookieValue(JwtUtil.AUTHORIZATION_HEADER) String tokenValue) {

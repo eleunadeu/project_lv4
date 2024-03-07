@@ -22,7 +22,9 @@ public class LectureController {
         this.lectureService = lectureService;
     }
 
-    @PostMapping("/")
+    // 보안 및 검증 중앙화
+    // 컨트롤러 단 예외 상황 처리
+    @PostMapping
     public ResponseEntity<LectureResponseDto.CreateLectureResponseDto> createLecture(
             @RequestBody @Valid LectureRequestDto.CreateLectureRequestDto requestDto,
             @CookieValue(JwtUtil.AUTHORIZATION_HEADER) String tokenValue) {
@@ -40,7 +42,7 @@ public class LectureController {
                 .body(lectureService.getLecture(id, tokenValue));
     }
 
-    @GetMapping("/{category}")
+    @GetMapping("?category={category}")
     public ResponseEntity<List<LectureResponseDto.GetLectureResponseDto>> getLectureCategory(
             @PathVariable Category category,
             @RequestParam(defaultValue = "createdAt") String sort,
