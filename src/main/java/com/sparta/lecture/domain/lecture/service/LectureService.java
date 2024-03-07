@@ -46,11 +46,11 @@ public class LectureService {
         validateAndAuthenticateToken(tokenValue);
 
         // Tutor 엔티티 조회
-        Tutor tutor = tutorRepository.findById(requestDto.getTutorId())
+        Tutor tutor = tutorRepository.findById(requestDto.getTutor())
                 .orElseThrow(() -> new CustomApiException("Tutor not found"));
 
         // toEntity 메서드를 수정하여 Tutor 엔티티를 전달
-        Lecture lecture = lectureRepository.save(requestDto.toEntity(tutor));
+        Lecture lecture = lectureRepository.save(requestDto.toEntity());
 
         return new LectureResponseDto.CreateLectureResponseDto(lecture);
     }
@@ -112,7 +112,7 @@ public class LectureService {
         String username = claims.getSubject(); // "getSubject()"는 사용자 이름 또는 고유 식별자를 의미
 
         // 사용자 검증 및 반환
-        return userRepository.findByUsername(username)
+        return userRepository.findByEmail(username)
                 .orElseThrow(() -> new CustomApiException("사용자가 존재하지 않습니다."));
     }
 }

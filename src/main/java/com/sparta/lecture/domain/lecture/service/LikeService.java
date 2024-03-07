@@ -56,7 +56,7 @@ public class LikeService {
         String username = claims.getSubject(); // "getSubject()"는 사용자 이름 또는 고유 식별자를 의미
 
         // 사용자 검증 및 반환
-        return userRepository.findByUsername(username)
+        return userRepository.findByEmail(username)
                 .orElseThrow(() -> new CustomApiException("사용자가 존재하지 않습니다."));
     }
 }

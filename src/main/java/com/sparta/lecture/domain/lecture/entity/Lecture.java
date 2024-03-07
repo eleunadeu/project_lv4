@@ -40,7 +40,7 @@ public class Lecture extends Timestamped {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "lecutre")
+    @OneToMany(mappedBy = "lecture")
     private List<Comment> comments = new ArrayList<>();
 
     @Builder

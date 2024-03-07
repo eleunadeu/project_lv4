@@ -93,7 +93,7 @@ public class CommentService {
         }
         Claims claims = jwtUtil.getUserInfoFromToken(token);
         String username = claims.getSubject();
-        return userRepository.findByUsername(username)
+        return userRepository.findByEmail(username)
                 .orElseThrow(() -> new CustomApiException("사용자가 존재하지 않습니다."));
     }
 
