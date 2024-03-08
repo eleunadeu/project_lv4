@@ -1,10 +1,12 @@
 package com.sparta.lecture.global.service;
 
+import com.sparta.lecture.global.dto.ResponseDto;
 import com.sparta.lecture.global.dto.SignupRequestDto;
 import com.sparta.lecture.global.entity.AuthEnum;
 import com.sparta.lecture.global.entity.User;
 import com.sparta.lecture.global.repository.UserRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +24,7 @@ public class UserService {
 
     // ADMIN_TOKEN
     private final String ADMIN_TOKEN = "gASLfqXtNROJDYcEujnmQbMkWTzvZP";
-    public void signup(SignupRequestDto requestDto) {
+    public ResponseDto<Object> signup(SignupRequestDto requestDto) {
         String email = requestDto.getEmail();
         String password = passwordEncoder.encode(requestDto.getPassword());
 
@@ -51,5 +53,7 @@ public class UserService {
                 .gender(requestDto.getGender())
                 .build();
         userRepository.save(user);
+
+        return new ResponseDto<>(true, "회원가입 성공", null);
     }
 }
